@@ -43,7 +43,7 @@ export function RouteContracts({
       </CardHeader>
       <CardContent>
         <Tabs defaultValue="todos" className="w-full">
-          <TabsList className="flex items-center justify-start flex-wrap h-auto space-y-1">
+          <TabsList className="flex items-center justify-start flex-wrap h-auto w-full">
             <TabsTrigger value="todos">Todos</TabsTrigger>
             <TabsTrigger value="pendentes">Pendentes</TabsTrigger>
             <TabsTrigger value="retirados">Retirados</TabsTrigger>

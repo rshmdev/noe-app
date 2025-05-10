@@ -283,7 +283,7 @@ export default function Register() {
             }
             className="mb-6 w-full"
           >
-            <TabsList className="flex items-center justify-start flex-wrap h-auto space-y-1">
+            <TabsList className="flex items-center justify-start flex-wrap h-auto w-full">
               <TabsTrigger disabled={step !== 1} value="usuario">
                 Sou Tutor
               </TabsTrigger>

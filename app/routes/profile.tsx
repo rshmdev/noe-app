@@ -178,7 +178,7 @@ export default function PerfilUsuario() {
 
       {/* Tabs para navegação - responsivo */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="flex items-center justify-start flex-wrap h-auto space-y-1">
+        <TabsList className="flex items-center justify-start flex-wrap h-auto w-full">
           <TabsTrigger value="info">Informações</TabsTrigger>
           {isTransporter && (
             <TabsTrigger value="stats">Estatísticas</TabsTrigger>

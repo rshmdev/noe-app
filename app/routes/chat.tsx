@@ -385,7 +385,7 @@ export default function ChatPage() {
 
               <div className="flex-1 overflow-y-auto">
                 <Tabs defaultValue="all" className="w-full py-4 px-4">
-                  <TabsList className="flex items-center justify-start flex-wrap h-auto space-y-1">
+                  <TabsList className="flex items-center justify-start flex-wrap h-auto w-full">
                     <TabsTrigger value="all">Todas</TabsTrigger>
                     <TabsTrigger value="unread">Não lidas</TabsTrigger>
                   </TabsList>

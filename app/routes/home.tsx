@@ -59,7 +59,7 @@ export default function Dashboard() {
     <ProtectedRoute allowedRoles={['NORMAL']}>
       <main className="container mx-auto py-6 px-4">
         <Tabs defaultValue="feed" className="w-full">
-          <TabsList className="flex items-center justify-start flex-wrap h-auto space-y-1">
+          <TabsList className="flex items-center justify-start flex-wrap h-auto w-full">
             <TabsTrigger value="feed">Feed de Rotas</TabsTrigger>
             <TabsTrigger value="busca">Buscar Rotas</TabsTrigger>
           </TabsList>

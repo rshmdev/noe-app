@@ -196,7 +196,7 @@ export default function MeusPedidos() {
 
         {/* Tabs para filtrar por status */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="flex items-center justify-start flex-wrap h-auto space-y-1">
+          <TabsList className="flex items-center justify-start flex-wrap h-auto w-full">
             <TabsTrigger value="all">Todos</TabsTrigger>
             <TabsTrigger value="pending">Pendentes</TabsTrigger>
             <TabsTrigger value="confirmed">Confirmados</TabsTrigger>
