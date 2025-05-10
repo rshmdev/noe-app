@@ -80,7 +80,6 @@ export default function ChatPage() {
   const chatId = searchParams.get('chatId') || '';
 
   const [activeChat, setActiveChat] = useState<Root | null>(null);
-  useGlobalSocket(activeChat?.id);
   const [messageText, setMessageText] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [showSidebar, setShowSidebar] = useState(true);
@@ -104,6 +103,21 @@ export default function ChatPage() {
     queryKey: ['chatMessages', activeChat?.id],
     queryFn: () => getChatMessages(activeChat!.id),
     enabled: !!activeChat,
+  });
+
+  useGlobalSocket(activeChat?.id, (newMessage) => {
+    if (newMessage.sender.id !== user?.id) {
+      queryClient.setQueryData(
+        ['chatMessages', activeChat!.id],
+        (old: Messages[] = []) => {
+          const alreadyExists = old.some((msg) => msg.id === newMessage.id);
+          if (alreadyExists) return old;
+          return [...old, newMessage];
+        },
+      );
+    }
+
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   });
 
   const { mutateAsync: sendMessageMutation, isPending: sendingMessage } =
@@ -220,85 +234,6 @@ export default function ChatPage() {
       setShowSidebar(false);
     }
   };
-
-  // useEffect(() => {
-  //   if (!activeChat?.id || !user?.id) return;
-
-  //   listenToChat(
-  //     activeChat.id,
-  //     activeChat.otherUser.id,
-  //     user.id,
-  //     (newMessage) => {
-  //       queryClient.setQueryData(
-  //         ['chatMessages', activeChat.id],
-  //         (old: Messages[] = []) => {
-  //           if (activeChat.id !== newMessage.chatId) {
-  //             markMessagesAsRead(newMessage.id);
-  //             toast.info('Nova mensagem recebida!');
-  //             return old;
-  //           }
-
-  //           if (newMessage?.proposal) {
-  //             const index = old.findIndex(
-  //               (msg) => msg.proposal?.id === newMessage.proposal?.id,
-  //             );
-
-  //             if (index !== -1) {
-  //               const updated = [...old];
-  //               updated[index] = {
-  //                 ...updated[index],
-  //                 proposal: {
-  //                   ...updated[index].proposal!,
-  //                   status: newMessage.proposal.status,
-  //                 },
-  //               };
-  //               return updated;
-  //             }
-  //           }
-
-  //           if (!old.some((msg) => msg.id === newMessage.id)) {
-  //             return [...old, newMessage];
-  //           }
-
-  //           return old;
-  //         },
-  //       );
-
-  //       queryClient.setQueryData(['chats'], (oldChats: Root[]) =>
-  //         oldChats?.map((chat) =>
-  //           chat.id === activeChat.id
-  //             ? {
-  //                 ...chat,
-  //                 lastMessage: {
-  //                   text: newMessage.text,
-  //                   createdAt: newMessage.createdAt,
-  //                   proposal: newMessage.proposal,
-  //                 },
-  //                 unreadCount: 0,
-  //               }
-  //             : chat,
-  //         ),
-  //       );
-  //     },
-  //     (chatId: string) => {
-  //       queryClient.setQueryData(['chats'], (oldChats: Root[]) =>
-  //         oldChats?.map((chat) =>
-  //           chat.id === chatId
-  //             ? {
-  //                 ...chat,
-  //                 unreadCount: chat.unreadCount + 1,
-  //               }
-  //             : chat,
-  //         ),
-  //       );
-  //     },
-  //   );
-
-  //   return () => {
-  //     socket.off('newMessage');
-  //     socket.off('unreadUpdate');
-  //   };
-  // }, [activeChat?.id, user?.id]);
 
   useEffect(() => {
     if (transportadorId && routeId && chats) {

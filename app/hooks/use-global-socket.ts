@@ -4,8 +4,11 @@ import { toast } from 'sonner';
 import useAuth from './use-auth';
 import { useNavigate } from 'react-router';
 
-export function useGlobalSocket(activeChatId?: string) {
-  const { user } = useAuth(); // ou pegue o user de algum lugar
+export function useGlobalSocket(
+  activeChatId?: string,
+  onNewMessage?: (message: any) => void,
+) {
+  const { user } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -15,13 +18,18 @@ export function useGlobalSocket(activeChatId?: string) {
       socket.connect();
     }
 
+    // Garante que o usuário esteja conectado à sua sala pessoal
     socket.emit('joinChat', { userId: user.id });
 
-    socket.off('newMessage');
-    socket.off('unreadUpdate');
-
-    socket.on('newMessage', (message) => {
+    const handleNewMessage = (message: any) => {
       console.log('Nova mensagem recebida:', message);
+
+      // Atualiza as mensagens se o chat estiver ativo
+      if (message.chatId === activeChatId && onNewMessage) {
+        onNewMessage(message);
+      }
+
+      // Exibe o toast se for uma nova mensagem de outro chat
       if (message.sender.id !== user.id && message.chatId !== activeChatId) {
         toast(`${message.sender.name} te enviou uma mensagem`, {
           description: message.text
@@ -36,17 +44,20 @@ export function useGlobalSocket(activeChatId?: string) {
           },
         });
       }
-    });
+    };
 
-    socket.on('unreadUpdate', (data) => {
+    const handleUnreadUpdate = (data: any) => {
       if (data.chatId !== activeChatId) {
         // Atualiza unread no frontend
       }
-    });
+    };
+
+    socket.on('newMessage', handleNewMessage);
+    socket.on('unreadUpdate', handleUnreadUpdate);
 
     return () => {
-      socket.off('newMessage');
-      socket.off('unreadUpdate');
+      socket.off('newMessage', handleNewMessage);
+      socket.off('unreadUpdate', handleUnreadUpdate);
     };
-  }, [user?.id, activeChatId]);
+  }, [user?.id, activeChatId, onNewMessage]);
 }
