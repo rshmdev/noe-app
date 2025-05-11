@@ -331,10 +331,10 @@ export default function ChatPage() {
                         {chats
                           .sort((a, b) => {
                             const dateA = new Date(
-                              a.lastMessage.createdAt,
+                              a.lastMessage?.createdAt,
                             ).getTime();
                             const dateB = new Date(
-                              b.lastMessage.createdAt,
+                              b.lastMessage?.createdAt,
                             ).getTime();
                             return dateB - dateA;
                           })
